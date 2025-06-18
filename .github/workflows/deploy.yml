@@ -8,19 +8,19 @@ permissions:
   contents: read      # Needed to fetch code (even if unused)
 
 jobs:
-  verify-aws-auth:
-    name: Verify OIDC → AWS Connection
-    runs-on: ubuntu-latest
+  verify-aws-auth:                     # ① Job ID (used for referencing)
+    name: Verify OIDC → AWS Connection # ② Human-readable job name (appears in Actions tab)
+    runs-on: ubuntu-latest             # ③ GitHub-hosted runner OS (Ubuntu in this case)
 
-    steps:
+    steps:                             # ④ Sequential list of tasks
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4     # Official GitHub Action to clone the repo
 
       - name: Configure AWS Credentials from OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}    # Injects OIDC-based creds into session
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Confirm AWS Identity
-        run: aws sts get-caller-identity
+        run: aws sts get-caller-identity                  # CLI command to confirm AWS identity

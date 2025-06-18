@@ -1,0 +1,26 @@
+name: Deploy (Verify IAM Role)
+
+on:
+  workflow_dispatch:  # Manual trigger for testing
+
+permissions:
+  id-token: write     # Required for OIDC
+  contents: read      # Needed to fetch code (even if unused)
+
+jobs:
+  verify-aws-auth:
+    name: Verify OIDC → AWS Connection
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials from OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Confirm AWS Identity
+        run: aws sts get-caller-identity

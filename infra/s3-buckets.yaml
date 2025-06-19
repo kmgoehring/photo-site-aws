@@ -12,9 +12,9 @@ Resources:
   PhotoUploadBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: photo-site-raw-uploads-dev  # Globally unique S3 bucket name
+      BucketName: photo-site-raw-uploads-dev-${AWS::AccountId}
       VersioningConfiguration:
-        Status: Enabled                       # Enables object versioning (protects against overwrites/deletes)
+        Status: Enabled
       Tags:
         - Key: Project
           Value: PhotoSite
@@ -27,11 +27,11 @@ Resources:
   StaticWebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: photo-site-static-hosting-dev   # Also globally unique
+      BucketName: photo-site-static-hosting-dev-${AWS::AccountId}
       WebsiteConfiguration:
-        IndexDocument: index.html                 # Required for S3 static site hosting (even if private)
+        IndexDocument: index.html
         ErrorDocument: error.html
-      AccessControl: Private                      # Bucket is private; CloudFront will access it using OAI
+      AccessControl: Private
       Tags:
         - Key: Project
           Value: PhotoSite

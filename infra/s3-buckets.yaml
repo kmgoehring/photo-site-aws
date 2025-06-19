@@ -12,7 +12,7 @@ Resources:
   PhotoUploadBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: photo-site-raw-uploads-dev-${AWS::AccountId}
+      BucketName: !Sub "photo-site-raw-uploads-dev-${AWS::AccountId}"
       VersioningConfiguration:
         Status: Enabled
       Tags:
@@ -27,7 +27,7 @@ Resources:
   StaticWebsiteBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: photo-site-static-hosting-dev-${AWS::AccountId}
+      BucketName: !Sub "photo-site-static-hosting-dev-${AWS::AccountId}"
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: error.html

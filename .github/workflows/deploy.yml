@@ -1,0 +1,38 @@
+name: Deploy Photo Site Infrastructure
+
+on:
+  workflow_dispatch:  # Manually triggered for now
+
+permissions:
+  id-token: write     # Required to use OIDC auth with AWS
+  contents: read      # Lets GitHub read repo contents (checkout, etc.)
+
+jobs:
+
+  deploy-s3-stack:  # Unique job ID for internal reference
+    name: Deploy S3 Buckets with CloudFormation
+    runs-on: ubuntu-latest  # Use GitHub-hosted Linux runner
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      # ------------------------------------------------------------------
+      #  Configure AWS credentials by assuming OIDC-based role
+      # ------------------------------------------------------------------
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # ----------------------------------------------------------
+      # Deploy the CloudFormation template from /infra
+      # ----------------------------------------------------------
+      - name: Deploy S3 Buckets Stack
+        run: |
+          aws cloudformation deploy \
+            --stack-name photo-site-s3-dev \                     # Stack name in CloudFormation Console
+            --template-file infra/s3-buckets.yaml \              # Relative path to CFN template
+            --capabilities CAPABILITY_NAMED_IAM \                # Required when templates involve IAM
+            --no-fail-on-empty-changeset                        # Allows re-runs without triggering errors if no changes

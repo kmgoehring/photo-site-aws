@@ -32,7 +32,7 @@ jobs:
       - name: Deploy S3 Buckets Stack
         run: |
           aws cloudformation deploy \
-            --stack-name photo-site-s3-dev \                     # Stack name in CloudFormation Console
-            --template-file infra/s3-buckets.yaml \              # Relative path to CFN template
-            --capabilities CAPABILITY_NAMED_IAM \                # Required when templates involve IAM
-            --no-fail-on-empty-changeset                        # Allows re-runs without triggering errors if no changes
+            --stack-name photo-site-s3-dev \
+            --template-file infra/s3-buckets.yaml \ 
+            --capabilities CAPABILITY_NAMED_IAM \  
+            --no-fail-on-empty-changeset                   

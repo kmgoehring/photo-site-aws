@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: '2010-09-09'  # CloudFormation template version (always this for now)
+Description: >
+  CloudFormation template to provision two S3 buckets for the Photo Site:
+  - Raw photo uploads (private, versioned)
+  - Static website hosting (private, CloudFront will serve this later)
+
+Resources:
+
+  # -------------------------------
+  # Bucket for raw photo uploads
+  # -------------------------------
+  PhotoUploadBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: photo-site-raw-uploads-dev  # Globally unique S3 bucket name
+      VersioningConfiguration:
+        Status: Enabled                       # Enables object versioning (protects against overwrites/deletes)
+      Tags:
+        - Key: Project
+          Value: PhotoSite
+        - Key: Environment
+          Value: Dev
+
+  # -----------------------------------------
+  # Bucket to host the static website content
+  # -----------------------------------------
+  StaticWebsiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: photo-site-static-hosting-dev   # Also globally unique
+      WebsiteConfiguration:
+        IndexDocument: index.html                 # Required for S3 static site hosting (even if private)
+        ErrorDocument: error.html
+      AccessControl: Private                      # Bucket is private; CloudFront will access it using OAI
+      Tags:
+        - Key: Project
+          Value: PhotoSite
+        - Key: Environment
+          Value: Dev
+
+# -------------------------------------
+# Outputs let you reference these values
+# in CI/CD logs, other stacks, or testing
+# -------------------------------------
+Outputs:
+
+  PhotoUploadBucketName:
+    Description: Name of the raw upload bucket
+    Value: !Ref PhotoUploadBucket
+
+  StaticWebsiteBucketName:
+    Description: Name of the static hosting bucket
+    Value: !Ref StaticWebsiteBucket

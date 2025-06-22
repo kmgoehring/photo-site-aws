@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFront Distribution for Photo Site (Static Content)
+
+Parameters:
+  # The domain name you registered (e.g., photosite.com)
+  DomainName:
+    Type: String
+    Description: The primary domain for the CloudFront distribution
+
+  # ARN of the validated ACM certificate (must be in us-east-1)
+  ACMCertificateArn:
+    Type: String
+    Description: ARN of the ACM certificate in us-east-1 for HTTPS
+
+  # S3 bucket domain name (without s3:// prefix)
+  S3BucketName:
+    Type: String
+    Description: Name of the S3 bucket used as CloudFront origin
+
+Resources:
+  # Origin Access Control for secure access to S3
+  CloudFrontOAC:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub "${AWS::StackName}-oac"
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+        Description: OAC for restricting CloudFront access to S3
+
+  # Main CloudFront distribution
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+
+        # Optional: Logging
+        # Logging:
+        #   Bucket: my-logging-bucket.s3.amazonaws.com
+        #   IncludeCookies: false
+        #   Prefix: logs/
+
+        # Default behavior settings
+        DefaultCacheBehavior:
+          TargetOriginId: S3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods:
+            - GET
+            - HEAD
+          CachedMethods:
+            - GET
+            - HEAD
+          Compress: true
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # CloudFront managed caching policy
+          OriginRequestPolicyId: 88a5eaf4-2fd4-4709-b370-b4c650ea3fcf # Passes all viewer headers
+          ResponseHeadersPolicyId: 67f7725c-6f97-4210-82d7-5512b31e9d03 # Adds security headers
+          ViewerProtocolPolicy: redirect-to-https
+
+        # Domain and HTTPS config
+        Aliases:
+          - !Ref DomainName
+        ViewerCertificate:
+          AcmCertificateArn: !Ref ACMCertificateArn
+          SslSupportMethod: sni-only
+          MinimumProtocolVersion: TLSv1.2_2021
+
+        # Origin (your S3 bucket)
+        Origins:
+          - Id: S3Origin
+            DomainName: !Sub "${S3BucketName}.s3.amazonaws.com"
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+            OriginAccessControlId: !GetAtt CloudFrontOAC.Id
+
+        # Default root object to load (e.g., index.html)
+        DefaultRootObject: index.html
+
+Outputs:
+  # The CloudFront distribution's URL
+  CloudFrontURL:
+    Description: URL of the CloudFront distribution
+    Value: !Sub "https://${CloudFrontDistribution.DomainName}"

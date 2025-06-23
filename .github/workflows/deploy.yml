@@ -36,3 +36,29 @@ jobs:
             --template-file infra/s3-buckets.yaml \
             --capabilities CAPABILITY_NAMED_IAM \
             --no-fail-on-empty-changeset
+  deploy-cloudfront:
+    name: Deploy CloudFront Distribution
+    runs-on: ubuntu-latest
+    needs: deploy-s3-stack # only runs after S3 buckets are deployed
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1 # CloudFront and ACM cert must be in us-east-1
+
+      - name: Deploy CloudFront Distribution Stack
+        run: |
+          aws cloudformation deploy \
+            --stack-name photo-site-cloudfront-dev \
+            --template-file infra/cloudfront-distribution.yaml \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --no-fail-on-empty-changeset \
+            --parameter-overrides \
+              DomainName=${{ secrets.PHOTOSITE_DOMAIN }} \
+              ACMCertificateArn=${{ secrets.PHOTOSITE_CERT_ARN }} \
+              S3BucketName=${{ secrets.PHOTOSITE_STATIC_BUCKET }}

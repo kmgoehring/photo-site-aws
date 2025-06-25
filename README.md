@@ -13,7 +13,7 @@ Built as a portfolio project to demonstrate cloud architecture, Infrastructure-a
 > (This link serves static content via CloudFront and a custom domain)
 
 ---
-## 🚀 Project Goals
+## Project Goals
 
 - Host a private family photo-sharing site using AWS Free Tier wherever possible
 - Practice modern cloud architecture and automation techniques

@@ -62,3 +62,34 @@ jobs:
               DomainName=${{ secrets.PHOTOSITE_DOMAIN }} \
               ACMCertificateArn=${{ secrets.PHOTOSITE_CERT_ARN }} \
               S3BucketName=${{ secrets.PHOTOSITE_STATIC_BUCKET }}
+  deploy-bucket-policy:
+    # This defines a separate job named "deploy-bucket-policy" within the GitHub Actions workflow
+    name: Deploy Bucket Policy for Static Site Bucket
+    runs-on: ubuntu-latest
+    # This job will only run if the "deploy-cloudfront" job finishes successfully
+    needs: deploy-cloudfront
+
+    steps:
+      # Step 1: Checkout the repo so GitHub Actions can access the YAML files in the repo
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      # Step 2: Configure AWS credentials to assume the correct IAM role and access AWS resources
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1  # Required to match the region of CloudFront & ACM
+
+      # Step 3: Deploy the bucket policy CloudFormation stack
+      - name: Deploy Bucket Policy Stack
+        run: |
+          aws cloudformation deploy \
+            --stack-name photo-site-bucket-policy-dev \             # Unique name for this stack
+            --template-file infra/bucket-policy.yaml \              # Path to the template file
+            --capabilities CAPABILITY_NAMED_IAM \                   # Required for IAM permissions in the template
+            --no-fail-on-empty-changeset \                          # Prevents error if no changes detected
+            --parameter-overrides \                                 # Pass in values for template parameters
+              BucketName=${{ secrets.PHOTOSITE_STATIC_BUCKET }} \   # S3 bucket to apply the policy to
+              CloudFrontDistributionId=${{ secrets.PHOTOSITE_DISTRO_ID }} # CloudFront distro that needs access
+

@@ -85,11 +85,11 @@ jobs:
       - name: Deploy Bucket Policy Stack
         run: |
           aws cloudformation deploy \
-            --stack-name photo-site-bucket-policy-dev \             # Unique name for this stack
-            --template-file infra/bucket-policy.yaml \              # Path to the template file
-            --capabilities CAPABILITY_NAMED_IAM \                   # Required for IAM permissions in the template
-            --no-fail-on-empty-changeset \                          # Prevents error if no changes detected
-            --parameter-overrides \                                 # Pass in values for template parameters
-              BucketName=${{ secrets.PHOTOSITE_STATIC_BUCKET }} \   # S3 bucket to apply the policy to
-              CloudFrontDistributionId=${{ secrets.PHOTOSITE_DISTRO_ID }} # CloudFront distro that needs access
+            --stack-name photo-site-bucket-policy-dev \
+            --template-file infra/bucket-policy.yaml \
+            --capabilities CAPABILITY_NAMED_IAM \
+            --no-fail-on-empty-changeset \
+            --parameter-overrides \
+              BucketName=${{ secrets.PHOTOSITE_STATIC_BUCKET }} \
+              CloudFrontDistributionId=${{ secrets.PHOTOSITE_DISTRO_ID }}
 

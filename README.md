@@ -20,3 +20,13 @@ Built as a portfolio project to demonstrate cloud architecture, Infrastructure-a
 - Showcase real-world use of Infrastructure-as-Code and DevOps pipelines
 
 ---
+## Architecture
+
+- **Amazon S3** – Static website hosting
+- **Amazon CloudFront** – Global CDN with HTTPS support
+- **Amazon ACM** – TLS certificate for custom domain
+- **Amazon Route 53** – Domain registration and DNS
+- **CloudFormation (YAML)** – Infrastructure-as-Code
+- **GitHub Actions** – CI/CD deployment pipeline
+
+---

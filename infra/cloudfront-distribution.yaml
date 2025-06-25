@@ -78,7 +78,16 @@ Resources:
         DefaultRootObject: index.html
 
 Outputs:
-  # The CloudFront distribution's URL
   CloudFrontURL:
     Description: URL of the CloudFront distribution
     Value: !Sub "https://${CloudFrontDistribution.DomainName}"
+  CloudFrontDistributionId:
+    Description: ID of the CloudFront Distribution
+    Value: !Ref CloudFrontDistribution
+    Export:
+      Name: photo-site-cloudfront-distribution-id
+  CloudFrontOACId:
+    Description: ID of the Origin Access Control (OAC)
+    Value: !Ref CloudFrontOAC
+    Export:
+      Name: photo-site-cloudfront-oac-id

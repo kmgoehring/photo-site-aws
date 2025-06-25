@@ -1,7 +1,9 @@
 name: Deploy Photo Site Infrastructure
 
 on:
-  workflow_dispatch:  # Manually triggered for now
+  push:
+    branches: [main]   # Automatically triggers on pushes to the main branch
+  workflow_dispatch:   # Still allows manual trigger from the GitHub UI
 
 permissions:
   id-token: write     # Required to use OIDC auth with AWS

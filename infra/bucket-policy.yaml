@@ -5,6 +5,10 @@ Parameters:
   BucketName:
     Type: String
     Description: Name of the S3 bucket to attach the policy to
+    
+  CloudFrontDistributionId:
+    Type: String
+    Description: ID of the CloudFront distribution
 
 Resources:
   StaticSiteBucketPolicy:
@@ -23,11 +27,6 @@ Resources:
             Condition:
               StringEquals:
                 AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistributionId}"
-
-Parameters:
-  CloudFrontDistributionId:
-    Type: String
-    Description: ID of the CloudFront distribution
 
 Outputs:
   PolicyAttachedToBucket:

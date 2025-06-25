@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Attach a bucket policy that allows CloudFront OAC to access the static site bucket
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: Name of the S3 bucket to attach the policy to
+
+Resources:
+  StaticSiteBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref BucketName
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowCloudFrontReadAccess
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub "arn:aws:s3:::${BucketName}/*"
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistributionId}"
+
+Parameters:
+  CloudFrontDistributionId:
+    Type: String
+    Description: ID of the CloudFront distribution
+
+Outputs:
+  PolicyAttachedToBucket:
+    Description: Confirms the policy attachment
+    Value: !Ref StaticSiteBucketPolicy

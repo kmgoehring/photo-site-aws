@@ -1,8 +1,9 @@
 AWSTemplateFormatVersion: '2010-09-09'  # CloudFormation template version (always this for now)
 Description: >
-  CloudFormation template to provision two S3 buckets for the Photo Site:
+  CloudFormation template to provision three S3 buckets for the Photo Site:
   - Raw photo uploads (private, versioned)
   - Static website hosting (private, CloudFront will serve this later)
+  - Logging bucket
 
 Resources:
 
@@ -20,6 +21,7 @@ Resources:
           Value: PhotoSite
         - Key: Environment
           Value: Dev
+      AccessControl: Private
 
   # -----------------------------------------
   # Bucket to host the static website content
@@ -31,12 +33,31 @@ Resources:
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: error.html
-      AccessControl: Private
       Tags:
         - Key: Project
           Value: PhotoSite
         - Key: Environment
           Value: Dev
+      AccessControl: Private
+  
+  # ------------------------------------------
+  # Bucket to store log files
+  # ------------------------------------------
+  LoggingBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "photo-site-logging-dev-${AWS::AccountId}"
+      AccessControl: Private
+      VersioningConfiguration:
+        Status: Enabled
+      Tags:
+        - Key: Project
+          Value: PhotoSite
+        - Key: Environment
+          Value: Dev
+      OwnershipControls:
+        Rules:
+        - ObjectOwnership: BucketOwnerPreferred
 
 # -------------------------------------
 # Outputs let you reference these values
@@ -47,7 +68,9 @@ Outputs:
   PhotoUploadBucketName:
     Description: Name of the raw upload bucket
     Value: !Ref PhotoUploadBucket
-
   StaticWebsiteBucketName:
     Description: Name of the static hosting bucket
     Value: !Ref StaticWebsiteBucket
+  LoggingBucketName:
+    Description: Name of the logging bucket
+    Value: !Ref LoggingBucket

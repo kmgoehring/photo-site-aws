@@ -9,6 +9,7 @@ Built as a portfolio project to demonstrate cloud architecture, Infrastructure-a
 
 ## Live Preview
 
+> Placeholder index.html at the moment. 
 > 🖼️ [https://lucasbellawilliam.com](https://lucasbellawilliam.com)  
 > (This link serves static content via CloudFront and a custom domain)
 

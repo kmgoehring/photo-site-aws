@@ -1,16 +1,21 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Attach a bucket policy that allows CloudFront OAC to access the static site bucket
+Description: Attach bucket policies for static site access and logging
 
 Parameters:
   BucketName:
     Type: String
-    Description: Name of the S3 bucket to attach the policy to
-    
+    Description: Name of the S3 bucket to attach the CloudFront policy to
+
   CloudFrontDistributionId:
     Type: String
     Description: ID of the CloudFront distribution
 
+  LoggingBucketName:
+    Type: String
+    Description: Name of the logging bucket that will receive access logs
+
 Resources:
+
   StaticSiteBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -28,7 +33,29 @@ Resources:
               StringEquals:
                 AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${CloudFrontDistributionId}"
 
+  LoggingBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref LoggingBucketName
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: s3.amazonaws.com
+            Action: s3:PutObject
+            Resource: !Sub "arn:aws:s3:::${LoggingBucketName}/static-site-access/*"
+            Condition:
+              ArnLike:
+                aws:SourceArn: !Sub "arn:aws:s3:::${BucketName}"
+
 Outputs:
-  PolicyAttachedToBucket:
-    Description: Confirms the policy attachment
+
+  StaticSitePolicyAttached:
+    Description: Confirms attachment to static hosting bucket
     Value: !Ref StaticSiteBucketPolicy
+
+  LoggingPolicyAttached:
+    Description: Confirms attachment to logging bucket
+    Value: !Ref LoggingBucketPolicy
+

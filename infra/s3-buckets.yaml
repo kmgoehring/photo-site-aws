@@ -33,6 +33,9 @@ Resources:
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: error.html
+      LoggingConfiguration:
+        DestinationBucketName: !Ref LoggingBucket
+        LogFilePrefix: static-site-access/
       Tags:
         - Key: Project
           Value: PhotoSite

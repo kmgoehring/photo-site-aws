@@ -23,7 +23,7 @@ Resources:
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Sid: AllowCloudFrontReadAccess
+          - Sid: AllowCloudFrontReadAccess-v2
             Effect: Allow
             Principal:
               Service: cloudfront.amazonaws.com

@@ -16,6 +16,11 @@ Parameters:
   S3BucketName:
     Type: String
     Description: Name of the S3 bucket used as CloudFront origin
+  
+  # S3 logging bucket 
+  LoggingBucketName:
+    Type: String
+    Description: Name of the logging bucket (no `s3://` or trailing slash)
 
 Resources:
   # Origin Access Control for secure access to S3
@@ -38,7 +43,7 @@ Resources:
 
         # Optional: Logging
         Logging:
-          Bucket: !Sub "${LoggingBucketName}.s3.amazonaws.com"
+          Bucket: !Ref LoggingBucketName
           IncludeCookies: false
           Prefix: "cloudfront-logs/"
 

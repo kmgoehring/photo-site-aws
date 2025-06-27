@@ -63,7 +63,8 @@ jobs:
             --parameter-overrides \
               DomainName=${{ secrets.PHOTOSITE_DOMAIN }} \
               ACMCertificateArn=${{ secrets.PHOTOSITE_CERT_ARN }} \
-              S3BucketName=${{ secrets.PHOTOSITE_STATIC_BUCKET }}
+              S3BucketName=${{ secrets.PHOTOSITE_STATIC_BUCKET }} \
+              LoggingBucketName=${{ secrets.PHOTOSITE_LOGGING_BUCKET }}
   deploy-bucket-policy:
     # This defines a separate job named "deploy-bucket-policy" within the GitHub Actions workflow
     name: Deploy Bucket Policy for Static Site Bucket

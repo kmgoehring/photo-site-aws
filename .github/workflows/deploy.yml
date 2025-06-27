@@ -93,7 +93,7 @@ jobs:
             --no-fail-on-empty-changeset \
             --parameter-overrides \
               BucketName=${{ secrets.PHOTOSITE_STATIC_BUCKET }} \
-              CloudFrontDistributionId=${{ secrets.PHOTOSITE_DISTRO_ID }}
+              CloudFrontDistributionId=${{ secrets.PHOTOSITE_DISTRO_ID }} \
               LoggingBucketName=${{ secrets.PHOTOSITE_LOGGING_BUCKET }}
   upload-static-site:
     name: Upload Static Site to S3

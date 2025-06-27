@@ -37,10 +37,10 @@ Resources:
         Enabled: true
 
         # Optional: Logging
-        # Logging:
-        #   Bucket: my-logging-bucket.s3.amazonaws.com
-        #   IncludeCookies: false
-        #   Prefix: logs/
+        Logging:
+          Bucket: !Sub "${LoggingBucketName}.s3.amazonaws.com"
+          IncludeCookies: false
+          Prefix: "cloudfront-logs/"
 
         # Default behavior settings
         DefaultCacheBehavior:

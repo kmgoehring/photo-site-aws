@@ -48,6 +48,14 @@ Resources:
             Condition:
               ArnLike:
                 aws:SourceArn: !Sub "arn:aws:s3:::${BucketName}"
+          - Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:PutObject
+            Resource: !Sub "arn:aws:s3:::${LoggingBucketName}/cloudfront-logs/*"
+            Condition:
+              StringEquals:
+                AWS:SourceAccount: !Sub "${AWS::AccountId}"        
 
 Outputs:
 

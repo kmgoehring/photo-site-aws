@@ -43,7 +43,7 @@ Resources:
 
         # Optional: Logging
         Logging:
-          Bucket: !Ref LoggingBucketName
+          Bucket: !Sub "${LoggingBucketName}.s3.amazonaws.com"
           IncludeCookies: false
           Prefix: "cloudfront-logs/"
 

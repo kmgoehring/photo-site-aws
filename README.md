@@ -31,3 +31,6 @@ Built as a portfolio project to demonstrate cloud architecture, Infrastructure-a
 - **GitHub Actions** – CI/CD deployment pipeline
 
 ---
+## Architecture Diagram
+
+![Architecture Diagram](docs/Photosite_Architecture.png)
